@@ -1,0 +1,33 @@
+{
+  "name": "JSDataStructureAlgorithms",
+  "version": "1.0.0",
+  "description": "Data Structures and Algorithms in JavaScript",
+  "author": "Cristina Tarantino",
+  "license": "MIT",
+  "main": "dist/index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "security-check": "nsp check",
+    "flow": "node_modules/.bin/flow check",
+    "flow:deps": "node_modules//.bin/flow-typed install",
+    "build": "babel src/ -d dist/",
+    "prepublish": "yarn run build",
+    "test": "yarn run prepublish && mocha ./src -name '*.test.js' --recursive --require babel-core/register -R spec"
+  },
+  "devDependencies": {
+    "babel-cli": "6.26.0",
+    "babel-eslint": "8.2.3",
+    "babel-preset-env": "1.7.0",
+    "babel-preset-flow": "6.23.0",
+    "chai": "4.1.2",
+    "eslint": "4.19.1",
+    "eslint-plugin-flowtype": "2.49.3",
+    "eslint-plugin-import": "2.12.0",
+    "flow-bin": "0.74.0",
+    "flow-typed": "2.4.0",
+    "mocha": "5.2.0",
+    "nsp": "3.2.1"
+  }
+}
