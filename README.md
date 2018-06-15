@@ -22,4 +22,7 @@ In the file report:
 The xN in left column is the amount of times that line has been executed.
 Not executed lines, or pieces of code, will be highlighted in red.
 
+For more details about the test process visit:
+
 https://github.com/dwyl/learn-istanbul
+https://github.com/istanbuljs/nyc
