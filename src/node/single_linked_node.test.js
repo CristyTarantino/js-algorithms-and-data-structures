@@ -8,10 +8,11 @@ describe('SingleLinkedNode', function () {
     // +------+------+
     let first: SingleLinkedNode = new SingleLinkedNode();
 
+    expect(first).to.be.an.instanceof(SingleLinkedNode);
     expect(first).to.have.property('value', null);
     expect(first).to.have.property('next', null);
   });
-  it ('should create a node type with a member variable which holds a numeric value and the address of the next node as null', function(){
+  it ('should create a DoubleLinkedNode with a member variable which holds a numeric value and the address of the next node as null', function(){
     // +------+------+
     // | 3 | null +
     // +------+------+
@@ -20,7 +21,7 @@ describe('SingleLinkedNode', function () {
     expect(first).to.have.property('value', 3);
     expect(first).to.have.property('next', null);
   });
-  it('should create a node type with a member variable which holds a numeric value and the address of the next node', function () {
+  it('should create a DoubleLinkedNode with a member variable which holds a numeric value and the address of the next node', function () {
 
     // 1. ARRANGE
     // +-----+------+
@@ -43,7 +44,7 @@ describe('SingleLinkedNode', function () {
     expect(first.next.value).to.equal(5);
     expect(middle.next).to.equal(null);
   });
-  it('should create a node type with null address of the next node', function () {
+  it('should create a DoubleLinkedNode with null address of the next node', function () {
 
     // 1. ARRANGE
     // +-----+------+

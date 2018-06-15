@@ -5,29 +5,53 @@
   "author": "Cristina Tarantino",
   "license": "MIT",
   "main": "dist/index.js",
-  "directories": {
-    "test": "test"
-  },
   "scripts": {
+    "prebuild": "yarn run test",
+    "build": "babel src/ -d dist/",
     "security-check": "nsp check",
     "flow": "node_modules/.bin/flow check",
-    "flow:deps": "node_modules//.bin/flow-typed install",
-    "build": "babel src/ -d dist/",
-    "prepublish": "yarn run build",
-    "test": "yarn run prepublish && mocha ./src -name '*.test.js' --recursive --require babel-core/register -R spec"
+    "clean-coverage": "rimraf ./coverage && mkdir -p coverage/.nyc_output",
+    "pretest": "yarn run security-check && yarn run flow && yarn run clean-coverage",
+    "test": "cross-env NODE_ENV=test nyc mocha ./src -name '*.test.js' --recursive --require babel-core/register -R spec",
+    "flow:deps": "node_modules/.bin/flow-typed install",
+    "postinstall": "yarn run flow:deps"
   },
   "devDependencies": {
     "babel-cli": "6.26.0",
     "babel-eslint": "8.2.3",
+    "babel-plugin-istanbul": "4.1.6",
     "babel-preset-env": "1.7.0",
     "babel-preset-flow": "6.23.0",
     "chai": "4.1.2",
+    "cross-env": "5.2.0",
     "eslint": "4.19.1",
     "eslint-plugin-flowtype": "2.49.3",
     "eslint-plugin-import": "2.12.0",
     "flow-bin": "0.74.0",
     "flow-typed": "2.4.0",
+    "istanbul": "0.4.5",
     "mocha": "5.2.0",
-    "nsp": "3.2.1"
+    "nsp": "3.2.1",
+    "nyc": "12.0.2"
+  },
+  "nyc": {
+    "check-coverage": true,
+    "per-file": true,
+    "include": [
+      "src/**/*.js"
+    ],
+    "exclude": [
+      "src/**/*.test.js"
+    ],
+    "reporter": [
+      "html",
+      "text"
+    ],
+    "temp-directory": "./coverage/.nyc_output",
+    "require": [
+      "babel-register"
+    ],
+    "sourceMap": false,
+    "instrument": false
   }
 }
