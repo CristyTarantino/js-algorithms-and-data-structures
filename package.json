@@ -11,7 +11,7 @@
     "security-check": "nsp check",
     "flow": "node_modules/.bin/flow check",
     "clean-coverage": "rimraf ./coverage && mkdir -p coverage/.nyc_output",
-    "pretest": "yarn run security-check && yarn run flow && yarn run clean-coverage",
+    "pretest": "yarn run clean-coverage && yarn run security-check && yarn run flow",
     "test": "cross-env NODE_ENV=test nyc mocha ./src -name '*.test.js' --recursive --require babel-core/register -R spec",
     "flow:deps": "node_modules/.bin/flow-typed install",
     "postinstall": "yarn run flow:deps"
