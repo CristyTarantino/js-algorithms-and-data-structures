@@ -1,22 +1,22 @@
-import SingleLinkedNode from "./single_linked_node";
+import Node from "./Node";
 
 /**
  * Double linked node
  * It basically consists of a member variable which holds the value and the addresses of the next and previous nodes
  */
-export default class DoubleLinkedNode<T:any> extends SingleLinkedNode<T> {
-  _prev: ?DoubleLinkedNode<T>;
+export default class DoublyLinkedNode<T:any> extends Node<T> {
+  _prev: ?DoublyLinkedNode<T>;
 
-  constructor(value?: ?T , prev?: ?DoubleLinkedNode<T>, next?: ?DoubleLinkedNode<T>): void {
+  constructor(value?: ?T , prev?: ?DoublyLinkedNode<T>, next?: ?DoublyLinkedNode<T>): void {
     super(value, next);
     this.prev = prev;
   }
 
-  get prev(): ?DoubleLinkedNode<T> {
+  get prev(): ?DoublyLinkedNode<T> {
     return this._prev;
   }
 
-  set prev(prev: ?DoubleLinkedNode<T>): void {
+  set prev(prev: ?DoublyLinkedNode<T>): void {
     if (prev && prev.constructor.name !== this.constructor.name){
       throw new Error(`next must be of type ${this.constructor.name}`);
     }
