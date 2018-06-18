@@ -1,69 +1,91 @@
 import { expect } from "chai";
 import DoubleLinkedNode from "./double_linked_node";
+import SingleLinkedNode from "./single_linked_node";
 
 describe('DoubleLinkedNode', function () {
-  it ('should create a DoubleLinkedNode node with a null as value and next', function(){
-    // +------+------+
-    // | null | null +
-    // +------+------+
-    let first: DoubleLinkedNode = new DoubleLinkedNode();
+  it ('should create a DoubleLinkedNode with null prev reference', function(){
+    // +------+------+------+
+    // | null | null | null |
+    // +------+------+------+
+    let first: DoubleLinkedNode<number> = new DoubleLinkedNode();
 
     expect(first).to.be.an.instanceof(DoubleLinkedNode);
-    expect(first).to.have.property('value', null);
-    expect(first).to.have.property('next', null);
+    expect(first).to.be.an.instanceof(SingleLinkedNode);
   });
-  it ('should create a DoubleLinkedNode with a member variable which holds a numeric value and the address of the next node as null', function(){
-    // +------+------+
-    // | 3 | null +
-    // +------+------+
-    let first: DoubleLinkedNode = new DoubleLinkedNode(3);
+  it ('should create a DoubleLinkedNode with null property prev', function(){
+    // +------+------+------+
+    // | null |   3  | null |
+    // +------+------+------+
+    let first: DoubleLinkedNode<number> = new DoubleLinkedNode(3);
 
-    expect(first).to.have.property('value', 3);
-    expect(first).to.have.property('next', null);
+    expect(first).to.have.property('prev', null);
   });
-  it('should create a DoubleLinkedNode with a member variable which holds a numeric value and the address of the next node', function () {
+  it('should allow to create 2 DoubleLinkedNodes linked to each other', function () {
 
     // 1. ARRANGE
-    // +-----+------+
-    // |  3  | null +
-    // +-----+------+
-    let first: DoubleLinkedNode = new DoubleLinkedNode(3);
+    // +------+------+------+
+    // | null |   3  | null |
+    // +------+------+------+
+    let first: DoubleLinkedNode<number> = new DoubleLinkedNode(3);
 
-    // +-----+------+    +-----+------+
-    // |  3  | null +    |  5  | null +
-    // +-----+------+    +-----+------+
-    let middle: DoubleLinkedNode = new DoubleLinkedNode(5);
+    // +------+------+------+    +------+------+------+
+    // | null |   3  | null |    | null |   5  | null |
+    // +------+------+------+    +------+------+------+
+    let last: DoubleLinkedNode<number> = new DoubleLinkedNode(5);
 
     // 2. ACT
-    // +-----+------+    +-----+------+
-    // |  3  |  *---+--->|  5  | null +
-    // +-----+------+    +-----+------+
-    first.next = middle;
+    // +------+------+------+    +------+------+------+
+    // | null |   3  |  *---+--->|      |   5  | null |
+    // |      |      |      |<---+--*   |      |      |
+    // +------+------+------+    +------+------+------+
+    first.next = last;
+    last.prev = first;
 
     // 3. ASSERT
     expect(first.next.value).to.equal(5);
-    expect(middle.next).to.equal(null);
-  });
-  it('should create a DoubleLinkedNode with null address of the next node', function () {
-
-    // 1. ARRANGE
-    // +-----+------+
-    // |  3  | null +
-    // +-----+------+
-    let first: DoubleLinkedNode = new DoubleLinkedNode(3);
-
-    // +-----+------+    +-----+------+
-    // |  3  | null +    |  5  | null +
-    // +-----+------+    +-----+------+
-    let last: DoubleLinkedNode = new DoubleLinkedNode(5);
-
-    // 2. ACT
-    // +-----+------+    +-----+------+
-    // |  3  |  *---+--->|  5  | null +
-    // +-----+------+    +-----+------+
-    first.next = last;
-
-    // 3. ASSERT
+    // $FlowFixMe
+    expect(last.prev.value).to.equal(3);
     expect(last.next).to.equal(null);
+    expect(first.prev).to.equal(null);
+  });
+  it('should allow to change prev to null', function () {
+    let first: DoubleLinkedNode<number> = new DoubleLinkedNode(3);
+
+    let last: DoubleLinkedNode<number> = new DoubleLinkedNode(5);
+
+    first.next = last;
+    last.prev = first;
+
+    first.next = null;
+    last.prev = null;
+
+    expect(first.next).to.equal(null);
+    expect(first.prev).to.equal(null);
+  });
+  it ('should not allow to change prev to a non DoubleLinkedNode Object', function(){
+    let first: DoubleLinkedNode<number> = new DoubleLinkedNode(3);
+
+    let last: Array<number> = [1, 2, 3];
+
+    // $FlowFixMe
+    let badFn = function () { first.prev = last };
+    // $FlowFixMe
+    expect(badFn).to.throw(Error);
+  });
+  it ('should not allow to change prev to a SingleLinkedNode Object', function(){
+    let first: DoubleLinkedNode<number> = new DoubleLinkedNode(3);
+
+    let last: SingleLinkedNode<number> = new SingleLinkedNode(5);
+
+    // $FlowFixMe
+    let badFn = function () { first.prev = last };
+    // $FlowFixMe
+    expect(badFn).to.throw(Error);
+  });
+  it('should not allow to change prev to undefined', function () {
+    let first: DoubleLinkedNode<number> = new DoubleLinkedNode(3);
+    first.prev = undefined;
+
+    expect(first.prev).to.equal(null);
   });
 });
