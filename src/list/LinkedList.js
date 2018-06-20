@@ -28,23 +28,23 @@ export default class LinkedList<T> {
   addFront<T:any>(value: T):void{
     if(value){
       //create the new node
-      let node: Node<T> = new Node(value);
+      let node: ?Node<T> = new Node(value);
 
       // if the list was empty then Head and Tail should both point to the new node.
-      if(!this._length){
-        this._type = value.constructor.name;
-
-        // $FlowFixMe https://github.com/facebook/flow/issues/5727
-        this._tail = node;
-      } else {
+      if (this._length) {
 
         // do not allow different types of Nodes
-        if(value.constructor.name !== this._type) {
+        if (value.constructor.name !== this._type) {
           throw new Error(`next must be of type ${this._type}`);
         }
 
         // $FlowFixMe https://github.com/facebook/flow/issues/5727
         node.next = this._head;
+      } else {
+        this._type = value.constructor.name;
+
+        // $FlowFixMe https://github.com/facebook/flow/issues/5727
+        this._tail = node;
       }
 
       this._head = node;
@@ -53,16 +53,16 @@ export default class LinkedList<T> {
   }
 
   removeFront():void{
-    if(this._length !== 0){
+    if(this._head && this._length){
       if (this._length === 1){
         this._head = null;
         this._tail = null;
       } else {
-        let currentFront = this._head;
-        // $FlowFixMe
-        this._head = this.head.next;
-        // $FlowFixMe
-        currentFront.next = null;
+        let current: Node<T> = this._head;
+
+        this._head = this._head.next;
+
+        current.next = null;
       }
       this._length--;
     }
@@ -71,23 +71,22 @@ export default class LinkedList<T> {
   addBack<T:any>(value: T):void{
     if(value){
       //create the new node
-      let node: Node<T> = new Node(value);
+      let node: ?Node<T> = new Node(value);
 
-      // if the list was empty then Head and Tail should both point to the new node.
-      if(!this._length){
-        this._type = value.constructor.name;
-
-        // $FlowFixMe https://github.com/facebook/flow/issues/5727
-        this._head = node;
-      } else {
+      // if the list was empty therefore no tail
+      if (this._tail && this._length) {
 
         // do not allow different types of Nodes
-        if(value.constructor.name !== this._type) {
+        if (value.constructor.name !== this._type) {
           throw new Error(`next must be of type ${this._type}`);
         }
 
+        // then Head and Tail should both point to the new node.
         // $FlowFixMe https://github.com/facebook/flow/issues/5727
         this._tail.next = node;
+      } else {
+        this._type = value.constructor.name;
+        this._head = node;
       }
 
       this._tail = node;
@@ -96,46 +95,94 @@ export default class LinkedList<T> {
   }
 
   removeBack():void{
-    if(this._length !== 0){
+    if(this._head){
       if (this._length === 1){
         this._head = null;
         this._tail = null;
       } else {
-        let currentBack: ?Node<T> = this._head;
+        let current: Node<T> = this._head;
 
-        // $FlowFixMe https://github.com/facebook/flow/issues/5727
-        while(currentBack.next !== this._tail){
-          // $FlowFixMe https://github.com/facebook/flow/issues/5727
-          currentBack = currentBack.next;
+        while(current.next && current.next !== this._tail){
+          current = current.next;
         }
 
-        // $FlowFixMe https://github.com/facebook/flow/issues/5727
-        currentBack.next = null;
-        this._tail = currentBack;
+        current.next = null;
+        this._tail = current;
 
       }
       this._length--;
     }
   }
 
-  contains<T:any>(value: T):boolean {
-    return true;
-  }
-
-  enumerate():string {
-    let currentBack: ?Node<T> = this._head;
-    let stringList = '';
-
-    while(currentBack !== null){
+  includes<T:any>(value: T):boolean {
+    if(this._head && value && (value: any).constructor.name === this._type) {
       // $FlowFixMe https://github.com/facebook/flow/issues/5727
-      stringList += currentBack.value.toString() + ', ';
-      // $FlowFixMe https://github.com/facebook/flow/issues/5727
-      currentBack = currentBack.next;
+      let current: ?Node<T> = this._head;
+
+      while (current) {
+        if (current.value === value) {
+          return true;
+        }
+        current = current.next;
+      }
     }
 
-    console.log(stringList);
+    return false;
+  }
 
-    return stringList;
+  remove(value: T):boolean {
+    if(value && this._length && (value: any).constructor.name === this._type) {
+      let previous: ?Node<T> = null;
+      let current: ?Node<T> = this._head;
+
+      while (current) {
+        // 1: Empty list - do nothing
+        // 2: Single node: (previous is null)
+        // 3: Many nodes
+        //    a: node to remove is the first node
+        //    b: node to remove is the middle or last
+        //    c: node to remove is the last node
+
+        if (current.value === value) {
+          if (previous)
+          {
+            // Case 3c
+            if (!current.next)
+            {
+              this.removeBack();
+            } else {
+              // Case 3b
+              // Before: Head -> 3 -> 5 -> 7
+              // After:  Head -> 3 ------> 7
+              previous.next = current.next;
+              this._length--;
+            }
+          }
+          else
+          {
+            // Case 2 or 3a
+            this.removeFront();
+          }
+
+          return true;
+        }
+
+        previous = current;
+        current = current.next;
+      }
+    }
+
+    return false;
+  }
+
+  // make our class list iterable https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Iterators_and_Generators
+  // $FlowFixMe https://github.com/facebook/flow/issues/3258
+  *[Symbol.iterator]() {
+    let current: ?Node<T> = this._head;
+    while (current !== null) {
+      yield current.value;
+      current = current.next;
+    }
   }
 
   clearList(){
@@ -143,69 +190,4 @@ export default class LinkedList<T> {
     this._tail = null;
     this._length = 0;
   }
-
-//
-// public bool Contains(T item)
-// {
-//   LinkedListNode<T> current = Head;
-//   while (current != null)
-//   {
-//     if (current.Value.Equals(item))
-//     {
-//       return true;
-//     }
-//
-//     current = current.Next;
-//   }
-//
-//   return false;
-// }
-
-// public bool Remove(T item)
-// {
-//   LinkedListNode<T> previous = null;
-//   LinkedListNode<T> current = Head;
-//
-//   // 1: Empty list - do nothing
-//   // 2: Single node: (previous is null)
-//   // 3: Many nodes
-//   //    a: node to remove is the first node
-//   //    b: node to remove is the middle or last
-//
-//   while (current != null)
-//   {
-//     if (current.Value.Equals(item))
-//     {
-//       // it's a node in the middle or end
-//       if (previous != null)
-//       {
-//         // Case 3b
-//
-//         // Before: Head -> 3 -> 5 -> null
-//         // After:  Head -> 3 ------> null
-//         previous.Next = current.Next;
-//
-//         // it was the end - so update Tail
-//         if (current.Next == null)
-//         {
-//           Tail = previous;
-//         }
-//
-//         Count--;
-//       }
-//       else
-//       {
-//         // Case 2 or 3a
-//         RemoveFirst();
-//       }
-//
-//       return true;
-//     }
-//
-//     previous = current;
-//     current = current.Next;
-//   }
-//
-//   return false;
-// }
 }
