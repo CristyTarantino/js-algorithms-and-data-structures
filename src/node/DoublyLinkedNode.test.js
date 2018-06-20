@@ -41,10 +41,12 @@ describe('DoublyLinkedNode', function () {
     first.next = last;
     last.prev = first;
 
+    let prevValue = last.prev.value;
+    let nextValue = first.next.value;
+
     // 3. ASSERT
-    expect(first.next.value).to.equal(5);
-    // $FlowFixMe
-    expect(last.prev.value).to.equal(3);
+    expect(nextValue).to.equal(5);
+    expect(prevValue).to.equal(3);
     expect(last.next).to.equal(null);
     expect(first.prev).to.equal(null);
   });
@@ -67,9 +69,7 @@ describe('DoublyLinkedNode', function () {
 
     let last: Array<number> = [1, 2, 3];
 
-    // $FlowFixMe
-    let badFn = function () { first.prev = last };
-    // $FlowFixMe
+    let badFn = () => { first.prev = last };
     expect(badFn).to.throw(Error);
   });
   it ('should not allow to change prev to a Node Object', function(){
@@ -77,9 +77,7 @@ describe('DoublyLinkedNode', function () {
 
     let last: Node<number> = new Node(5);
 
-    // $FlowFixMe
-    let badFn = function () { first.prev = last };
-    // $FlowFixMe
+    let badFn = () => { first.prev = last };
     expect(badFn).to.throw(Error);
   });
   it('should not allow to change prev to undefined', function () {

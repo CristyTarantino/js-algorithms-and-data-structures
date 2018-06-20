@@ -58,11 +58,10 @@ describe('Node', function () {
   });
   it('should allow to change next to null', function () {
     let first: Node<number> = new Node(3);
-
     let last: Node<number> = new Node(5);
 
-    first.next = last;
 
+    first.next = last;
     first.next = null;
 
     expect(first.next).to.equal(null);
@@ -72,9 +71,7 @@ describe('Node', function () {
 
     let last: Array<number> = [1, 2, 3];
 
-    // $FlowFixMe
-    let badFn = function () { first.next = last };
-
+    let badFn = () => { first.next = last };
     expect(badFn).to.throw(Error);
   });
   it('should not allow to change value to undefined', function () {
