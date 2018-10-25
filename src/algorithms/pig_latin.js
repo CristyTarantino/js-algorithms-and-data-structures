@@ -10,9 +10,9 @@ function translatePigLatin(str) {
     return str.concat("way");
   }
   
-  let firstCons = str.match(/^[^(a|e|i|o|u)]+/)[0];
+  let firstCons = str.match(/^[^(a|e|i|o|u)]+/) || [];
   
-  return str.slice(firstCons.length).concat(firstCons).concat("ay");
+  return firstCons.length ? str.slice(firstCons.length).concat(firstCons).concat("ay") : "";
 }
 
 translatePigLatin("consonant");
