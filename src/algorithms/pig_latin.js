@@ -12,7 +12,7 @@ function translatePigLatin(str) {
   
   let firstCons = str.match(/^[^(a|e|i|o|u)]+/) || [];
   
-  return firstCons.length ? str.slice(firstCons.length).concat(firstCons).concat("ay") : "";
+  return firstCons.length ? [...str].slice(firstCons.length).concat([...firstCons]).concat([..."ay"]).join('') : "";
 }
 
 translatePigLatin("consonant");
